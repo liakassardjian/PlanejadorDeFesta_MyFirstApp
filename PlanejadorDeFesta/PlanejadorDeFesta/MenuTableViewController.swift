@@ -22,6 +22,7 @@ class MenuTableViewController: UITableViewController {
         tableView.dataSource = self
         tableView.delegate = self
         navigationItem.title = "Festas"
+        tableView.rowHeight = 178
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -39,9 +40,9 @@ class MenuTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "aCell") as! UITableViewCell
-        cell.textLabel?.text = parties[indexPath.row].name
-        cell.detailTextLabel?.text = "\(parties[indexPath.row].numOfGuests) convidados"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "aCell") as! PartyMenuTableViewCell
+        cell.title.text = parties[indexPath.row].name
+        cell.subtitle.text = "\(parties[indexPath.row].numOfGuests) convidados"
         return cell
     }
     
@@ -70,19 +71,13 @@ class MenuTableViewController: UITableViewController {
         return false
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
-            if indexPath.row == 0 {
-                let storyboard = UIStoryboard.init(name: "Main", bundle: nil)
-                let controller = storyboard.instantiateViewController(withIdentifier: "partyMainTasks")
-                self.navigationController!.pushViewController(controller, animated: true)
-            }
-        }
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let partyGuest = segue.destination as? GuestsTableViewController {
             partyGuest.partyTVC = self
+        }
+        if let partyTVC = segue.destination as? PartyTableViewController {
+            partyTVC.party = parties[tableView.indexPathForSelectedRow!.row]
+            partyTVC.menuTVC = self
         }
     }
     
